@@ -31,6 +31,11 @@ async function start(fields) {
   await authenticate(fields.email, fields.password)
   log('info', 'Successfully logged in')
 
+  log('info', 'Retrieving bills ...')
+  const $ = await request(`${baseUrl}/zone_client/factures`)
+  const bills = await getBills($)
+  log('info', 'Successfully retrieved bills')
+
   return Promise.resolve()
 }
 
@@ -62,4 +67,70 @@ function authenticate(email, password) {
       }
     }
   })
+}
+
+function getBills($) {
+  const $rows = $('table tbody tr')
+  const bills = $rows.map((i, el) => getBill($(el))).get()
+
+  return bills
+}
+
+function getBill($row) {
+  const date = getDate($row)
+  const { amount, currency } = getAmountAndCurrency($row)
+  const invoiceNumber = getInvoiceNumber($row)
+
+  return {
+    vendor: 'Inulogic',
+    date,
+    amount,
+    currency,
+    fileurl: getFileUrl(invoiceNumber),
+    filename: getFilename(date, amount, invoiceNumber)
+  }
+}
+
+function getDate($row) {
+  const [year, month, day] = $row
+    .find('td:nth-child(2)')
+    .text()
+    .trim()
+    .split('/')
+    .reverse()
+
+  return new Date(year, month - 1, day)
+}
+
+function getAmountAndCurrency($row) {
+  const [rawAmount, currency] = $row
+    .find('td:nth-child(4)')
+    .text()
+    .trim()
+    .split(' ')
+  const amount = parseFloat(rawAmount.replace(',', '.'))
+
+  return { amount, currency }
+}
+
+function getInvoiceNumber($row) {
+  const invoiceNumber = $row
+    .find('td:first-child')
+    .text()
+    .trim()
+
+  return invoiceNumber
+}
+
+// TODO utiliser html2pdf (voir avec Christophe)
+function getFileUrl(invoiceNumber) {
+  const url = `${baseUrl}/zone_client/Invoice/Details?number=${invoiceNumber}`
+
+  return url
+}
+
+function getFilename(date, amount, invoiceNumber) {
+  const amountStr = `${amount}`.replace('.', '-')
+
+  return `${date.toISOString()}_${amountStr}_${invoiceNumber}.pdf`
 }
