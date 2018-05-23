@@ -6,6 +6,8 @@ const {
   saveBills,
   log
 } = require('cozy-konnector-libs')
+const pdf = require('pdfjs')
+const html2pdf = require('./html2pdf')
 const request = requestFactory({
   // the debug mode shows all the details about http request and responses. Very usefull for
   // debugging but very verbose. That is why it is commented out by default
@@ -36,7 +38,11 @@ async function start(fields) {
   const bills = await getBills($)
   log('info', 'Successfully retrieved bills')
 
-  return Promise.resolve()
+  log('info', 'Saving bills to Cozy ...')
+  await saveBills(bills, fields.folderPath, {
+    identifiers: ['inulogic']
+  })
+  log('info', 'Saved bills to Cozy')
 }
 
 // this shows authentication using the [signin function](https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#module_signin)
@@ -69,26 +75,29 @@ function authenticate(email, password) {
   })
 }
 
-function getBills($) {
+async function getBills($) {
   const $rows = $('table tbody tr')
-  const bills = $rows.map((i, el) => getBill($(el))).get()
+  const bills = await Promise.all($rows.map((i, el) => getBill($(el))).get())
 
   return bills
 }
 
-function getBill($row) {
+async function getBill($row) {
   const date = getDate($row)
   const { amount, currency } = getAmountAndCurrency($row)
   const invoiceNumber = getInvoiceNumber($row)
 
-  return {
+  const bill = {
     vendor: 'Inulogic',
     date,
     amount,
     currency,
-    fileurl: getFileUrl(invoiceNumber),
     filename: getFilename(date, amount, invoiceNumber)
   }
+
+  bill.filestream = await billURLToStream(getFileUrl(invoiceNumber))
+
+  return bill
 }
 
 function getDate($row) {
@@ -133,4 +142,43 @@ function getFilename(date, amount, invoiceNumber) {
   const amountStr = `${amount}`.replace('.', '-')
 
   return `${date.toISOString()}_${amountStr}_${invoiceNumber}.pdf`
+}
+
+async function billURLToStream(url) {
+  const doc = new pdf.Document()
+  const $ = repairDocument(await request(url))
+  html2pdf($, doc, $('#facture'), { baseURL: url })
+  doc.end()
+  return doc
+}
+
+// For now, html2pdf throws an error when some <td>s are missing
+// Since we know that the tables rows contains a maximum of 4 <td>
+// we compute the number of missing <td> and we add one with a colspan
+// to fill the hole #truelle
+function repairDocument($) {
+  const $rows = $('tr')
+  const NB_TDS_REQUIRED = 4
+
+  $rows.each((i, el) => {
+    const $el = $(el)
+    const $tds = $el.find('td')
+
+    let nbTds = 0
+    $tds.each((i, el) => {
+      const colspan = parseInt($(el).attr('colspan'))
+      nbTds += isNaN(colspan) ? 1 : colspan
+    })
+
+    const nbMissingTds = NB_TDS_REQUIRED - nbTds
+
+    if (nbMissingTds > 0) {
+      $el
+        .find('td')
+        .first()
+        .before(`<td colspan="${nbMissingTds}"></td>`)
+    }
+  })
+
+  return $
 }
