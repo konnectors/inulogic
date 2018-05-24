@@ -41,7 +41,8 @@ async function start(fields) {
 
   log('info', 'Saving bills to Cozy ...')
   await saveBills(bills, fields.folderPath, {
-    identifiers: ['inulogic']
+    identifiers: ['inulogic'],
+    contentType: 'application/pdf'
   })
   log('info', 'Saved bills to Cozy')
 }
