@@ -7,6 +7,7 @@ const {
   log
 } = require('cozy-konnector-libs')
 const pdf = require('pdfjs')
+const formatDate = require('date-fns/format')
 const html2pdf = require('./html2pdf')
 const request = requestFactory({
   // the debug mode shows all the details about http request and responses. Very usefull for
@@ -141,7 +142,7 @@ function getFileUrl(invoiceNumber) {
 function getFilename(date, amount, invoiceNumber) {
   const amountStr = `${amount}`.replace('.', '-')
 
-  return `${date.toISOString()}_${amountStr}_${invoiceNumber}.pdf`
+  return `${formatDate(date, 'YYYY-MM-DD')}_${amountStr}_${invoiceNumber}.pdf`
 }
 
 async function billURLToStream(url) {
