@@ -132,7 +132,6 @@ function getInvoiceNumber($row) {
   return invoiceNumber
 }
 
-// TODO utiliser html2pdf (voir avec Christophe)
 function getFileUrl(invoiceNumber) {
   const url = `${baseUrl}/zone_client/Invoice/Details?number=${invoiceNumber}`
 
