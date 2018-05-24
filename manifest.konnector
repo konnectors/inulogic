@@ -10,7 +10,7 @@
   "vendor_link": "https://www.inulogic.fr/",
   "categories": ["other"],
   "fields": {
-    "email": {
+    "login": {
       "type": "text"
     },
     "password": {

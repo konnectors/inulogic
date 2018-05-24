@@ -19,8 +19,9 @@ const baseUrl = 'https://www.inulogic.fr'
 module.exports = new BaseKonnector(start)
 
 async function start(fields) {
+  log('info', fields)
   log('info', 'Authenticating ...')
-  await authenticate(fields.email, fields.password)
+  await authenticate(fields.login, fields.password)
   log('info', 'Successfully logged in')
 
   log('info', 'Retrieving bills ...')
@@ -36,11 +37,11 @@ async function start(fields) {
   log('info', 'Saved bills to Cozy')
 }
 
-function authenticate(email, password) {
+function authenticate(login, password) {
   return signin({
     url: `${baseUrl}/se-connecter`,
     formSelector: 'form[action="/se-connecter"]',
-    formData: { userNameOrEmail: email, password },
+    formData: { userNameOrEmail: login, password },
     validate: (statusCode, $) => {
       if ($(`a[href='/se-deconnecter']`).length === 1) {
         return true
