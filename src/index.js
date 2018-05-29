@@ -7,11 +7,11 @@ const {
   requestFactory,
   signin,
   saveBills,
-  log
+  log,
+  htmlToPDF
 } = require('cozy-konnector-libs')
 const pdf = require('pdfjs')
 const formatDate = require('date-fns/format')
-const html2pdf = require('./html2pdf')
 const request = requestFactory({
   cheerio: true,
   json: false,
@@ -136,7 +136,7 @@ function getFilename(date, amount, invoiceNumber) {
 async function billURLToStream(url) {
   const doc = new pdf.Document()
   const $ = repairDocument(await request(url))
-  html2pdf($, doc, $('#facture'), { baseURL: url })
+  htmlToPDF($, doc, $('#facture'), { baseURL: url })
   doc.end()
   return doc
 }
