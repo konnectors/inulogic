@@ -1,0 +1,46 @@
+language: node_js
+node_js:
+- '8'
+env:
+  global:
+  - GH_USER_EMAIL="travis@example.org"
+  - GH_USER_NAME="cozy-bot"
+  - DEPLOY_REPOSITORY="git@github.com:konnectors/inulogic.git"
+  # REGISTRY_TOKEN
+  - secure: "ZXhAL8wvNGHUdgH6MJmMcooikN5btLYvt2GS5yr4Ry15CX38njHzkNkpr1RuIrIpFg4epU5FmZV2sOGvanvOO/lzVrDAol5xizpfVBL8oNk95qP/mnaieCzjNw3+vTwYAvgr9iuGhsP1bLYnRkmlDPQ96s3cfs6nCD1ReU8d719Cyv94FJNAV/yeFc4aNX+2aGiaCZqgq9bCHed3egFwhMDKXY91CRdbybGX4CS8jWd1I07uSW9+liTUU6FGeMUtSjBoBrklQN2Ql3smm4jIqSKntbzVvBmTGA7F1lDxbIbA4o0W6HD3tuZD/75C8av/ahqepThsM10yeIFR+550pKzKuYxnS5/3Hn6sS6nk8corjfJdXoo4Y7IwEIDpwcy1N/VnAfD1v+OnDznPebJrie6uJivP/Y2ijFk3FSItE7mUswSItiIG2FK9lNwToopTFQAcMGwIT4axlYt7EYcglst7F2c4njkun/21JZrzjYRfKLBChKyADPo/sj9Q2bqIZqoA3IuDbJMOWdg/FTJD4Vfy1k9YmsyheJkS/qkAJFpZCY3IFhrcXoKzI+RLK9UNBuTYTHR819nWPP92AG/WgeqtSaQ0eaBb4hx0yHyg3DLxrHF75lK5eGMRujSzPywUbez0FD7NWkuFahEc3sqwmogWdVYocP5jW2PR2+Y+KIg="
+cache:
+  yarn: true
+  directories:
+  - node_modules
+branches:
+  except:
+  - build
+  - latest
+script:
+- yarn lint
+- yarn build
+deploy:
+- provider: script
+  skip-cleanup: true
+  script: DEPLOY_BRANCH=build yarn deploy && yarn cozyPublish
+  on:
+    branch: master
+- provider: script
+  skip-cleanup: true
+  script: DEPLOY_BRANCH=latest yarn deploy
+  on:
+    branch: prod
+- provider: script
+  skip-cleanup: true
+  script: DEPLOY_BRANCH=build yarn deploy && yarn cozyPublish
+  on:
+    tags: true
+before_install:
+- openssl aes-256-cbc -K $encrypted_907d6a5e76db_key -iv $encrypted_907d6a5e76db_iv
+  -in github_deploy_key.enc -out /tmp/github_deploy_key -d
+- eval "$(ssh-agent -s)"
+- chmod 600 /tmp/github_deploy_key
+- ssh-add /tmp/github_deploy_key
+after_deploy:
+- rm /tmp/github_deploy_key
+- ssh-add -D
