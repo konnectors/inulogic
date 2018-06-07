@@ -1540,9 +1540,9 @@ cozy-jobs-cli@1.2.0:
     opn "^5.1.0"
     regenerator-runtime "^0.11.1"
 
-cozy-konnector-libs@4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/cozy-konnector-libs/-/cozy-konnector-libs-4.4.0.tgz#e69e347f562bba941b3d7d8759a774309cb3367f"
+cozy-konnector-libs@4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/cozy-konnector-libs/-/cozy-konnector-libs-4.5.0.tgz#7e98e6b59f3b97b3553367ef975da84c3f201906"
   dependencies:
     bluebird "3.5.1"
     bluebird-retry "0.11.0"
