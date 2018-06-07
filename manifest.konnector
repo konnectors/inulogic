@@ -1,14 +1,14 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Inulogic",
   "type": "konnector",
   "language": "node",
   "icon": "icon.png",
   "slug": "inulogic",
   "source": "git://github.com/konnectors/inulogic.git",
-  "editor": "Cozy",
+  "editor": "drazik",
   "vendor_link": "https://www.inulogic.fr/",
-  "categories": ["other"],
+  "categories": ["online_services"],
   "fields": {
     "login": {
       "type": "text"
@@ -42,8 +42,8 @@
     }
   },
   "developer": {
-    "name": "Cozy Cloud",
-    "url": "https://cozy.io"
+    "name": "drazik",
+    "url": "https://github.com/drazik"
   },
   "langs": ["fr", "en"],
   "locales": {
