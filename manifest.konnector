@@ -8,7 +8,7 @@
   "source": "git://github.com/konnectors/inulogic.git",
   "editor": "drazik",
   "vendor_link": "https://www.inulogic.fr/",
-  "categories": ["other"],
+  "categories": ["online_services"],
   "fields": {
     "login": {
       "type": "text"
