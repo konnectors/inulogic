@@ -83,5 +83,6 @@
         }
       }
     }
-  }
+  },
+  "banksTransactionRegExp": "\\binulogic\\b"
 }
