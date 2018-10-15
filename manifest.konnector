@@ -84,5 +84,6 @@
       }
     }
   },
-  "banksTransactionRegExp": "\\binulogic\\b"
+  "banksTransactionRegExp": "\\binulogic\\b",
+  "manifest_version": "2"
 }
