@@ -1,11 +1,11 @@
 {
-  "version": "1.1.1",
+  "version": "1.2.0",
   "name": "Inulogic",
   "type": "konnector",
   "language": "node",
   "icon": "icon.svg",
   "slug": "inulogic",
-  "source": "git://github.com/konnectors/inulogic.git",
+  "source": "git@github.com:konnectors/inulogic.git",
   "editor": "drazik",
   "vendor_link": "https://www.inulogic.fr/",
   "categories": [
